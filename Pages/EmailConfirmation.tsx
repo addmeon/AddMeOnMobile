@@ -1,5 +1,4 @@
-import LoginScreen, { emailValidator, SocialButton } from "react-native-login-screen";
-import { Linking, Platform, SafeAreaView, Text, View } from "react-native";
+import { SafeAreaView, Text, View } from "react-native";
 import React from "react";
 
 
