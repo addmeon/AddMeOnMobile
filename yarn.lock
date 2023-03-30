@@ -5859,12 +5859,24 @@ react-native-hce@^0.2.0:
     "@babel/core" "^7.18.13"
     "@babel/preset-env" "^7.1.6"
 
+react-native-login-screen@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-login-screen/-/react-native-login-screen-5.0.0.tgz#0fa348a21610d64ad1e1407478d45baa1d73bcac"
+  integrity sha512-vvUPtH4gJJAMfovevakBy1RBpMem7Rl3PSuIWYh/TdC5ZWfYTYgYxyC4TOoLyVC/hlbS0F6OfYoDy0Hua7n6YA==
+  dependencies:
+    react-native-text-input-interactive ">=0.1.4"
+
 react-native-nfc-manager@^3.14.2:
   version "3.14.2"
   resolved "https://registry.npmjs.org/react-native-nfc-manager/-/react-native-nfc-manager-3.14.2.tgz"
   integrity sha512-9w//z3MwigtZ3YWDvgY+IFZ//dH7jHf70CmzUrMGhM9N4DxlUJOJHjF0GveRh+YxwlVgFDVTFFG96YSRZgPtOw==
   dependencies:
     "@expo/config-plugins" "^4.0.16"
+
+react-native-text-input-interactive@>=0.1.4, react-native-text-input-interactive@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/react-native-text-input-interactive/-/react-native-text-input-interactive-0.1.4.tgz#e1c30a6ea125e9c2415ef9c7ab0d07272e878305"
+  integrity sha512-Y8oCZkfZ03EiSXcSV9AWns2Zr5XVNRMRQRFMFXBS5vpYvpfvR3fp9MSP4uNZ3aNi6i27qLQQOCoVXf8vZiMngg==
 
 react-native@0.71.4:
   version "0.71.4"
