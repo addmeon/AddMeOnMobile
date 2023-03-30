@@ -11,10 +11,16 @@ import { Platform } from "react-native";
 
 import { HCESession, NFCTagType4NDEFContentType, NFCTagType4 } from "react-native-hce";
 import Signup from "./Pages/Signup";
+import { NavigationContainer } from "@react-navigation/native";
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import EmailConfirmation from "./Pages/EmailConfirmation";
 
 
 function App(): JSX.Element {
   let session;
+
+  const Stack = createNativeStackNavigator();
+
 
 
   const startSession = async () => {
@@ -36,7 +42,18 @@ function App(): JSX.Element {
     .catch(err => console.error(err));
 
   return (
-    <Signup />
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{
+        headerShown: false
+      }}>
+        <Stack.Screen
+          name="Signup"
+          component={Signup}
+        />
+        <Stack.Screen name="Emailconfirmation" component={EmailConfirmation} />
+      </Stack.Navigator>
+    </NavigationContainer>
+
   );
 }
 

@@ -3,8 +3,14 @@ import { Linking, Platform, SafeAreaView, Text, View } from "react-native";
 import React from "react";
 
 
-function Signup(): JSX.Element {
+function Signup({navigation}: any): JSX.Element {
   let email: string;
+
+  const handleSignup = () => {
+    if(!emailValidator(email)) return;
+    console.log("Email signup: " + email); // TODO: send to api and send email
+    navigation.navigate('Emailconfirmation', {email: email});
+  }
 
   return (
     <>
@@ -14,10 +20,7 @@ function Signup(): JSX.Element {
           <LoginScreen
             style={{ height: "100%", backgroundColor: "white" }}
             logoImageSource={require("../assets/logos/addmeon.jpeg")}
-            onLoginPress={() => {
-              if(!emailValidator(email)) return;
-              console.log("Email signup: " + email);
-            }}
+            onLoginPress={() => handleSignup()}
             onSignupPress={() => {
               return;
             }}
