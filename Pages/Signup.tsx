@@ -4,8 +4,9 @@ import React, { useState } from "react";
 import { GoogleSignin, statusCodes, User } from "@react-native-google-signin/google-signin";
 import appleAuth from "@invertase/react-native-apple-authentication";
 // @ts-ignore
-import {HOST} from "@env";
+import { HOST } from "@env";
 import { getDeviceId, getUniqueId, getUniqueIdSync } from "react-native-device-info";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 function Signup({ navigation }: any): JSX.Element {
@@ -15,19 +16,25 @@ function Signup({ navigation }: any): JSX.Element {
 
   const continueWithMail = async (email: string) => {
     setLoading(true);
-    await fetch(HOST + "/api/users/signup", {
-      method: "POST",
-      body: JSON.stringify({
-        email: email,
-        deviceId: getUniqueIdSync()
-      })
-    }).then(res => res.json()).then(data => console.log(data));
-    navigation.navigate("Emailconfirmation", { email: email });
+    try {
+      await AsyncStorage.setItem("@signed_up", "true");
+      await AsyncStorage.setItem("@user_email", email);
+      await fetch(HOST + "/api/users/signup", {
+        method: "POST",
+        body: JSON.stringify({
+          email: email,
+          deviceId: getUniqueIdSync()
+        })
+      }).catch(err => console.error(err));
+      navigation.navigate("Emailconfirmation");
+      // TODO: handle server down
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleSignup = () => {
     if (!emailValidator(email)) return;
-    console.log("Email signup: " + email); // TODO: send to api and send email
     continueWithMail(email).catch(err => console.error(err));
   };
 
@@ -37,7 +44,7 @@ function Signup({ navigation }: any): JSX.Element {
     try {
       await GoogleSignin.hasPlayServices();
       googleUserInfo = await GoogleSignin.signIn();
-      navigation.navigate("Emailconfirmation", { email: googleUserInfo.user.email });
+      await continueWithMail(googleUserInfo.user.email);
       setLoading(false);
     } catch (error: any) {
       setLoading(false);
@@ -70,7 +77,7 @@ function Signup({ navigation }: any): JSX.Element {
       // use credentialState response to ensure the user is authenticated
       if (credentialState === appleAuth.State.AUTHORIZED) {
         if (appleAuthRequestResponse.email !== null)
-          continueWithMail(appleAuthRequestResponse.email);
+          await continueWithMail(appleAuthRequestResponse.email);
       }
 
     } catch (e) {
@@ -137,9 +144,10 @@ function Signup({ navigation }: any): JSX.Element {
                     </>
                   }
                 />
-                <Text onPress={() => Linking.openURL("https://example.org")}
+                <Text onPress={() =>
+                  Linking.openURL("https://addmeon.org/termsandconditions")}
                       style={{ padding: 10, textAlign: "center", color: "grey", fontSize: 10, marginBottom: 10 }}>
-                  By signing up, you acknowledge that you have read and accept the following {""}
+                  By using the Add Me On app, you acknowledge that you have read and accept the following {""}
                   <Text style={{ textDecorationLine: "underline" }}>
                     Terms & Conditions
                   </Text>

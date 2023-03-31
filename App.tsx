@@ -6,7 +6,7 @@
  */
 
 import React, { useEffect, useRef, useState } from "react";
-import { AppState, Linking, Platform } from "react-native";
+import { ActivityIndicator, AppState, Linking, Platform } from "react-native";
 
 
 import { HCESession, NFCTagType4NDEFContentType, NFCTagType4 } from "react-native-hce";
@@ -14,13 +14,17 @@ import Signup from "./Pages/Signup";
 import { getPathFromState, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import EmailConfirmation from "./Pages/EmailConfirmation";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import Account from "./Pages/Account";
 
 
 function App(props: any): JSX.Element {
   let session;
 
   const Stack = createNativeStackNavigator();
+
+  const [loading, setLoading] = useState(true);
 
 
   const startSession = async () => {
@@ -38,43 +42,60 @@ function App(props: any): JSX.Element {
 
 
   startSession()
-    .then(res => console.log("test: " +res))
+    .then(res => res)
     .catch(err => console.error(err));
 
 
   // TODO: check if user logged in and if user email confirmed
-  const storeData = async (value: string) => {
-    try {
-      const jsonValue = JSON.stringify(value)
-      await AsyncStorage.setItem('@storage_Key', jsonValue)
-    } catch (e) {
-      // saving error
-    }
-  }
+
+  const [value, setValue] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
   const getData = async () => {
+    //await AsyncStorage.clear();
     try {
-      const value = await AsyncStorage.getItem('@storage_Key')
-      if(value !== null) {
+      setValue(await AsyncStorage.getItem("@signed_up") === "true");
+      setLoggedIn(await AsyncStorage.getItem("@email_confirmed") === "true");
+      if (value !== null) {
         // value previously stored
       }
-    } catch(e) {
+    } catch (e) {
       // error reading value
     }
-  }
+  };
+
+  getData().then(() => setLoading(false));
 
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{
-        headerShown: false
-      }}>
-        <Stack.Screen
-          name="Signup"
-          component={Signup}
-        />
-        <Stack.Screen name="Emailconfirmation" component={EmailConfirmation} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      {
+        loading ?
+          <ActivityIndicator />
+          :
+          <NavigationContainer>
+            <Stack.Navigator screenOptions={{
+              headerShown: false
+            }} initialRouteName={value ? "Emailconfirmation" : "Signup"}>
+              {loggedIn ?
+                <Stack.Screen
+                  name="Account"
+                  component={Account}
+                />
+                :
+                <>
+                  <Stack.Screen
+                    name="Signup"
+                    component={Signup}
+                  />
+                  <Stack.Screen name="Emailconfirmation">
+                    {(props) => <EmailConfirmation {...props} setLoggedIn={setLoggedIn}/>}
+                  </Stack.Screen>
+                </>
+              }
+            </Stack.Navigator>
+          </NavigationContainer>
+      }
+    </>
 
   );
 }

@@ -1,32 +1,49 @@
-import { AppState, SafeAreaView, Text, View } from "react-native";
+import { Image, AppState, SafeAreaView, Text, View, ActivityIndicator } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 
 // @ts-ignore
 import { HOST } from "@env";
 import { getDeviceId, getUniqueId, getUniqueIdSync } from "react-native-device-info";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
-function EmailConfirmation({ navigation, route }: any): JSX.Element {
+function EmailConfirmation({ navigation, route, setLoggedIn }: any): JSX.Element {
   // TODO: make pretty
   const [deviceVerified, setDeviceVerified] = useState(false);
 
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
+  const [loading, setLoading] = useState(true);
+  const [email, setEmail] = useState("");
+
   const fetchVerified = async () => {
     try {
+      let emailFromStorage;
+      if(email==="") {
+        emailFromStorage = await AsyncStorage.getItem("@user_email");
+        await setEmail(emailFromStorage as string);
+        console.log(email);
+      }
       const response = await fetch(HOST + "/api/verified", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          email: route.params.email,
+          email: emailFromStorage,
           deviceId: getUniqueIdSync()
         })
       });
+
       const json = await response.json();
-      setDeviceVerified(json.verified);
+      if(json.verified){
+        await AsyncStorage.setItem("@email_confirmed", "true");
+        setLoggedIn(true);
+      }
+
+      // TODO: store deviceverified in asyncstorage
+      console.log('jsoN: ' + JSON.stringify(json));
     } catch (error) {
       console.error(error);
     }
@@ -51,22 +68,43 @@ function EmailConfirmation({ navigation, route }: any): JSX.Element {
     };
   }, []);
 
+  const getData = async () => {
+    try {
+      const emailFromStorage = await AsyncStorage.getItem("@user_email");
+      if (emailFromStorage !== null) setEmail(emailFromStorage);
+    } catch (e) {
+      // error reading value
+    }
+  };
+
+  getData().then(() => setLoading(false));
+
 
   return (
     <>
+
       <SafeAreaView>
-        <View style={{ height: "100%" }}>
-          <Text style={{ padding: 10, textAlign: "center" }}>
-            Please verify your sign in at ({route.params.email})
-          </Text>
-          <Text>{appState.current}</Text>
-          {
-            deviceVerified ?
-              <Text>Verified</Text>
-              :
-              <Text>Not yet verified</Text>
-          }
-        </View>
+        {
+          loading ?
+            <ActivityIndicator />
+            :
+            <View style={{ height: "100%" }}>
+              {
+                deviceVerified ?
+                  <Text>Verified</Text>
+                  :
+                  <>
+                    <Image
+                      source={require("../assets/password.gif")}
+                      style={{alignSelf: "center", margin: 10}}
+                    />
+                    <Text style={{ padding: 10, textAlign: "center" }}>
+                      Please verify your sign in at ({email})
+                    </Text>
+                  </>
+              }
+            </View>
+        }
       </SafeAreaView>
 
     </>
