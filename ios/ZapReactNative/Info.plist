@@ -20,6 +20,27 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>GIDClientID</key>
+    <string>314627931940-kankula6blf7ln21gqp26rnqs5fv9irt.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>iosClientId</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.314627931940-kankula6blf7ln21gqp26rnqs5fv9irt</string>
+			</array>
+		</dict>
+		<dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>addmeon</string>
+            </array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>

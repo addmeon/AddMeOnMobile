@@ -3,6 +3,7 @@ import React from "react";
 
 
 function EmailConfirmation({navigation, route} : any): JSX.Element {
+  // TODO: make pretty
 
   return (
     <>

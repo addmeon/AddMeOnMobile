@@ -5,22 +5,22 @@
  * @format
  */
 
-import React from "react";
-import { Platform } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { AppState, Linking, Platform } from "react-native";
 
 
 import { HCESession, NFCTagType4NDEFContentType, NFCTagType4 } from "react-native-hce";
 import Signup from "./Pages/Signup";
-import { NavigationContainer } from "@react-navigation/native";
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { getPathFromState, NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import EmailConfirmation from "./Pages/EmailConfirmation";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-function App(): JSX.Element {
+function App(props: any): JSX.Element {
   let session;
 
   const Stack = createNativeStackNavigator();
-
 
 
   const startSession = async () => {
@@ -38,8 +38,30 @@ function App(): JSX.Element {
 
 
   startSession()
-    .then(res => console.log(res))
+    .then(res => console.log("test: " +res))
     .catch(err => console.error(err));
+
+
+  // TODO: check if user logged in and if user email confirmed
+  const storeData = async (value: string) => {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('@storage_Key', jsonValue)
+    } catch (e) {
+      // saving error
+    }
+  }
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('@storage_Key')
+      if(value !== null) {
+        // value previously stored
+      }
+    } catch(e) {
+      // error reading value
+    }
+  }
+
 
   return (
     <NavigationContainer>
