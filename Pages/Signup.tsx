@@ -3,21 +3,36 @@ import { ActivityIndicator, Linking, Platform, SafeAreaView, Text, View } from "
 import React, { useState } from "react";
 import { GoogleSignin, statusCodes, User } from "@react-native-google-signin/google-signin";
 import appleAuth from "@invertase/react-native-apple-authentication";
+// @ts-ignore
+import {HOST} from "@env";
+import { getDeviceId, getUniqueId, getUniqueIdSync } from "react-native-device-info";
 
 
 function Signup({ navigation }: any): JSX.Element {
   let email: string;
   let googleUserInfo: User;
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const continueWithMail = async (email: string) => {
+    setLoading(true);
+    await fetch(HOST + "/api/users/signup", {
+      method: "POST",
+      body: JSON.stringify({
+        email: email,
+        deviceId: getUniqueIdSync()
+      })
+    }).then(res => res.json()).then(data => console.log(data));
+    navigation.navigate("Emailconfirmation", { email: email });
+  };
 
   const handleSignup = () => {
     if (!emailValidator(email)) return;
     console.log("Email signup: " + email); // TODO: send to api and send email
-    navigation.navigate("Emailconfirmation", { email: email });
+    continueWithMail(email).catch(err => console.error(err));
   };
 
   const handleGoogleSignup = async () => {
-    setLoading(true)
+    setLoading(true);
     GoogleSignin.configure();
     try {
       await GoogleSignin.hasPlayServices();
@@ -54,13 +69,13 @@ function Signup({ navigation }: any): JSX.Element {
 
       // use credentialState response to ensure the user is authenticated
       if (credentialState === appleAuth.State.AUTHORIZED) {
-        navigation.navigate(
-          "Emailconfirmation",
-          { email: appleAuthRequestResponse.email }
-        );
+        if (appleAuthRequestResponse.email !== null)
+          continueWithMail(appleAuthRequestResponse.email);
       }
-    } catch (e: any) {console.error(e)}
 
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -122,7 +137,8 @@ function Signup({ navigation }: any): JSX.Element {
                     </>
                   }
                 />
-                <Text onPress={() => Linking.openURL("https://example.org")} style={{ padding: 10, textAlign: "center", color: "grey", fontSize: 10, marginBottom: 10 }}>
+                <Text onPress={() => Linking.openURL("https://example.org")}
+                      style={{ padding: 10, textAlign: "center", color: "grey", fontSize: 10, marginBottom: 10 }}>
                   By signing up, you acknowledge that you have read and accept the following {""}
                   <Text style={{ textDecorationLine: "underline" }}>
                     Terms & Conditions
@@ -137,6 +153,6 @@ function Signup({ navigation }: any): JSX.Element {
 
     </>
   );
-}
+};
 
 export default Signup;
