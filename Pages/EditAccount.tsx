@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Button, SafeAreaView, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, Button, SafeAreaView, ScrollView, Text, TextInput, View } from "react-native";
 import { WebView } from "react-native-webview";
 import AddMeOnButton from "../Components/AddMeOnButton";
 
@@ -28,9 +28,10 @@ export default function EditAccount({ navigation }: any): JSX.Element {
       })
     });
     const json = await response.json();
-    console.log(json)
+    console.log(json);
+    await fetchAddMeOns();
     setLoading(false);
-  }
+  };
 
   const fetchAddMeOns = async () => {
     const response = await fetch(HOST + "/api/users/addmeons/list", {
@@ -47,30 +48,29 @@ export default function EditAccount({ navigation }: any): JSX.Element {
     const arrAddMeOnButtons: any = [];
     console.log(json.addMeOns);
     await setAddMeOns(await json.addMeOns);
-    console.log("state: "+ JSON.stringify(addMeOns));
+    console.log("state: " + JSON.stringify(addMeOns));
 
-    json.addMeOns ?
       //TODO figure out
       Object.keys(json.addMeOns).forEach((key, index) => {
         console.log("key: " + key);
-        arrAddMeOnButtons.push(<AddMeOnButton key={index}
+        arrAddMeOnButtons.push(<AddMeOnButton key={key}
                                               title={key}
                                               addMeOn={json.addMeOns[key]}
                                               saveChanges={saveChanges}
         />);
       })
-      :
+
       Object.keys(addMeOnsStatic).forEach((key, index) => {
-        arrAddMeOnButtons.push(<AddMeOnButton key={index}
+        if(json.addMeOns) if(Object.keys(json.addMeOns).includes(key)) return;
+        arrAddMeOnButtons.push(<AddMeOnButton key={key}
                                               title={key}
                                               addMeOn={addMeOnsStatic[key]}
                                               saveChanges={saveChanges}
         />);
       });
-    setAddMeOnButtons(arrAddMeOnButtons)
+    setAddMeOnButtons(arrAddMeOnButtons);
     setLoading(false);
   };
-
 
 
   useEffect(() => {
@@ -95,24 +95,26 @@ export default function EditAccount({ navigation }: any): JSX.Element {
 
   return (
     <SafeAreaView>
-      <View style={{alignSelf: "flex-start"}}>
-        <Button title="Return to home" onPress={() => navigation.navigate("Home")}/>
-      </View>
-      <View style={{ margin: 10, padding: 10 }}>
-        <>
+      <ScrollView>
+        <View style={{ alignSelf: "flex-start" }}>
+          <Button title="Return to home" onPress={() => navigation.navigate("Home")} />
+        </View>
+        <View style={{ margin: 10, padding: 10 }}>
+          <>
 
-          <Text style={{ marginBottom: 20, fontSize: 30 }}>
-            What would you like to edit on your Add Me On page?
-          </Text>
-          {loading ?
-            <ActivityIndicator />
-            :
-            <>
-              {addMeOnButtons}
-            </>
-          }
-        </>
-      </View>
+            <Text style={{ marginBottom: 20, fontSize: 30 }}>
+              What would you like to edit on your Add Me On page?
+            </Text>
+            {loading ?
+              <ActivityIndicator />
+              :
+              <>
+                {addMeOnButtons}
+              </>
+            }
+          </>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

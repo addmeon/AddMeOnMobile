@@ -1,5 +1,5 @@
 import QRCode from "react-native-qrcode-svg";
-import { ActivityIndicator, Button, SafeAreaView, View } from "react-native";
+import { ActivityIndicator, Button, SafeAreaView, Text, View } from "react-native";
 
 // @ts-ignore
 import { HOST } from "@env";
@@ -25,13 +25,16 @@ export default function Home({ navigation }: any): JSX.Element {
   }, []);
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       {loading ?
         <ActivityIndicator />
         :
         <View>
-          <View style={{ alignItems: "flex-end", justifyContent: "flex-start"}}>
+          <View style={{ alignItems: "flex-end", justifyContent: "flex-start" }}>
             <Button title="Edit your Add Me On page" onPress={() => navigation.navigate("EditAccount")}></Button>
+          </View>
+          <View style={{ padding: 10, alignItems: "center" }}>
+            <Text style={{fontSize: 30}}>addmeon.org/{path}</Text>
           </View>
           <View style={{
             alignItems: "center", justifyContent: "center"

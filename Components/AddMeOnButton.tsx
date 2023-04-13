@@ -29,8 +29,22 @@ export default function AddMeOnButton({ title, addMeOn, saveChanges }: any): JSX
                 justifyContent: "space-between"
               }}
               >
-                <Text style={{ fontSize: 18, paddingVertical: 10 }}>{title}: {addMeOn.link ? "saved" : "unset"}</Text>
-                <Text style={{ fontSize: 18, paddingVertical: 10 }}>✍️</Text>
+                <Text style={{
+                  fontSize: 18,
+                  paddingVertical: 10
+                }}>
+                  {title}:
+                </Text>
+                <View style={{ flexDirection: "row" }}>
+                  <Text style={{
+                    fontSize: 18,
+                    paddingVertical: 10,
+                    color: addMeOn.link ? "green" : "red"
+                  }}>
+                    {addMeOn.link ? addMeOn.link : "unset"}
+                  </Text>
+                  <Text style={{ fontSize: 18, paddingVertical: 10 }}>{"  "}✍️</Text>
+                </View>
               </View>
             </TouchableOpacity>
           </>
