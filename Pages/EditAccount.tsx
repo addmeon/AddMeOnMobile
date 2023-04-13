@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, SafeAreaView, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, Button, SafeAreaView, Text, TextInput, View } from "react-native";
 import { WebView } from "react-native-webview";
 import AddMeOnButton from "../Components/AddMeOnButton";
 
@@ -95,6 +95,9 @@ export default function EditAccount({ navigation }: any): JSX.Element {
 
   return (
     <SafeAreaView>
+      <View style={{alignSelf: "flex-start"}}>
+        <Button title="Return to home" onPress={() => navigation.navigate("Home")}/>
+      </View>
       <View style={{ margin: 10, padding: 10 }}>
         <>
 

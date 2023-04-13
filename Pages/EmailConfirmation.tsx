@@ -7,7 +7,7 @@ import { getDeviceId, getUniqueId, getUniqueIdSync } from "react-native-device-i
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
-function EmailConfirmation({ navigation, route, setLoggedIn }: any): JSX.Element {
+function EmailConfirmation({ navigation, route, setLoggedIn, loggedIn }: any): JSX.Element {
   // TODO: make pretty
   const [deviceVerified, setDeviceVerified] = useState(false);
 
@@ -16,6 +16,8 @@ function EmailConfirmation({ navigation, route, setLoggedIn }: any): JSX.Element
 
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
+
+  setInterval(() => {if(!loggedIn)fetchVerified();}, 1000);
 
   const fetchVerified = async () => {
     try {
@@ -31,13 +33,14 @@ function EmailConfirmation({ navigation, route, setLoggedIn }: any): JSX.Element
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          email: emailFromStorage,
+          email: email,
           deviceId: getUniqueIdSync()
         })
       });
+      console.log(response);
 
       const json = await response.json();
-      if(json.verified){
+      if(json.verified === "true"){
         await AsyncStorage.setItem("@email_confirmed", "true");
         setLoggedIn(true);
       }

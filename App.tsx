@@ -17,6 +17,8 @@ import EmailConfirmation from "./Pages/EmailConfirmation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import Account from "./Pages/Account";
+import EditAccount from "./Pages/EditAccount";
+import Home from "./Pages/Home";
 
 
 function App(props: any): JSX.Element {
@@ -48,14 +50,17 @@ function App(props: any): JSX.Element {
 
   // TODO: check if user logged in and if user email confirmed
 
-  const [value, setValue] = useState(false);
+  const [signedUp, setSignedUp] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [pathSaved, setPathSaved] = useState(false);
+
   const getData = async () => {
-    //await AsyncStorage.clear();
+//    await AsyncStorage.clear();
     try {
-      setValue(await AsyncStorage.getItem("@signed_up") === "true");
+      setSignedUp(await AsyncStorage.getItem("@signed_up") === "true");
       setLoggedIn(await AsyncStorage.getItem("@email_confirmed") === "true");
-      if (value !== null) {
+      setPathSaved(await AsyncStorage.getItem("@path_saved") === "true");
+      if (signedUp !== null) {
         // value previously stored
       }
     } catch (e) {
@@ -73,26 +78,38 @@ function App(props: any): JSX.Element {
           <ActivityIndicator />
           :
           <NavigationContainer>
-            <Stack.Navigator screenOptions={{
-              headerShown: false
-            }} initialRouteName={value ? "Emailconfirmation" : "Signup"}>
-              {loggedIn ?
-                <Stack.Screen
-                  name="Account"
-                  component={Account}
-                />
+            {
+              loggedIn ?
+                <Stack.Navigator screenOptions={{
+                  headerShown: false
+                }} initialRouteName={pathSaved ? "Home" : "Account"}>
+                  <Stack.Screen name="Home">
+                    {(props) => <Home {...props} />}
+                  </Stack.Screen>
+                  <Stack.Screen name="Account">
+                    {(props) => <Account {...props} setPathSaved={setPathSaved} />}
+                  </Stack.Screen>
+                  <Stack.Screen
+                    name="EditAccount"
+                    component={EditAccount}
+                  />
+                </Stack.Navigator>
                 :
-                <>
+                <Stack.Navigator screenOptions={{
+                  headerShown: false
+                }} initialRouteName={signedUp ? "Emailconfirmation" : "Signup"}>
                   <Stack.Screen
                     name="Signup"
                     component={Signup}
                   />
                   <Stack.Screen name="Emailconfirmation">
-                    {(props) => <EmailConfirmation {...props} setLoggedIn={setLoggedIn}/>}
+                    {(props) =>
+                      <EmailConfirmation
+                        {...props} loggedIn={loggedIn} setLoggedIn={setLoggedIn}
+                      />}
                   </Stack.Screen>
-                </>
-              }
-            </Stack.Navigator>
+                </Stack.Navigator>
+            }
           </NavigationContainer>
       }
     </>
