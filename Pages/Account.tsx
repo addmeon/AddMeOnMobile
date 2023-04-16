@@ -42,7 +42,7 @@ export default function Account({ navigation, setPathSaved }: any): JSX.Element 
         })
       });
       const json = await response.json();
-      console.log(response.status)
+      console.log(response.status);
       if (response.status === 200) {
 
         await AsyncStorage.setItem("@path_saved", "true");
@@ -77,6 +77,7 @@ export default function Account({ navigation, setPathSaved }: any): JSX.Element 
             }}
             onChangeText={async (value) => {
               await checkPathAvailable(value);
+              if (!pathAvailable) return;
               setPath(value);
             }}
             autoCorrect={false}

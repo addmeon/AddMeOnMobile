@@ -41,7 +41,7 @@ export default function AddMeOnButton({ title, addMeOn, saveChanges }: any): JSX
                     paddingVertical: 10,
                     color: addMeOn.link ? "green" : "red"
                   }}>
-                    {addMeOn.link ? addMeOn.link : "unset"}
+                    {addMeOn.link ? '"' + addMeOn.link +'"' : "unset"}
                   </Text>
                   <Text style={{ fontSize: 18, paddingVertical: 10 }}>{"  "}✍️</Text>
                 </View>

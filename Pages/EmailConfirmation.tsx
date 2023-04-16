@@ -17,9 +17,8 @@ function EmailConfirmation({ navigation, route, setLoggedIn, loggedIn }: any): J
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
 
-  setInterval(() => {if(!loggedIn)fetchVerified();}, 1000);
-
   const fetchVerified = async () => {
+    if(loggedIn) return;
     try {
       let emailFromStorage;
       if(email==="") {
@@ -50,7 +49,10 @@ function EmailConfirmation({ navigation, route, setLoggedIn, loggedIn }: any): J
     } catch (error) {
       console.error(error);
     }
+    setTimeout(() => fetchVerified(), 1000);
   };
+
+  if(!loggedIn)fetchVerified();
 
   useEffect(() => {
     const subscription = AppState.addEventListener("change", nextAppState => {

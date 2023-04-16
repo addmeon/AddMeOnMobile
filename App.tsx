@@ -20,9 +20,14 @@ import Account from "./Pages/Account";
 import EditAccount from "./Pages/EditAccount";
 import Home from "./Pages/Home";
 
+//@ts-ignore
+import {HOST} from "@env";
+
 
 function App(props: any): JSX.Element {
   let session;
+
+  console.log(HOST);
 
   const Stack = createNativeStackNavigator();
 
@@ -54,8 +59,10 @@ function App(props: any): JSX.Element {
   const [loggedIn, setLoggedIn] = useState(false);
   const [pathSaved, setPathSaved] = useState(false);
 
+  //AsyncStorage.clear();
+
   const getData = async () => {
-//    await AsyncStorage.clear();
+
     try {
       setSignedUp(await AsyncStorage.getItem("@signed_up") === "true");
       setLoggedIn(await AsyncStorage.getItem("@email_confirmed") === "true");
@@ -83,11 +90,11 @@ function App(props: any): JSX.Element {
                 <Stack.Navigator screenOptions={{
                   headerShown: false
                 }} initialRouteName={pathSaved ? "Home" : "Account"}>
-                  <Stack.Screen name="Home">
-                    {(props) => <Home {...props} />}
-                  </Stack.Screen>
                   <Stack.Screen name="Account">
                     {(props) => <Account {...props} setPathSaved={setPathSaved} />}
+                  </Stack.Screen>
+                  <Stack.Screen name="Home">
+                    {(props) => <Home {...props} />}
                   </Stack.Screen>
                   <Stack.Screen
                     name="EditAccount"

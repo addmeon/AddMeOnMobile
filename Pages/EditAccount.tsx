@@ -8,6 +8,8 @@ import { HOST } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getUniqueIdSync } from "react-native-device-info";
 
+// TODO upload profile picture
+
 export default function EditAccount({ navigation }: any): JSX.Element {
   const [loading, setLoading] = useState<boolean>(true);
   const [addMeOns, setAddMeOns] = useState({});
@@ -34,40 +36,42 @@ export default function EditAccount({ navigation }: any): JSX.Element {
   };
 
   const fetchAddMeOns = async () => {
+    const userMail = await AsyncStorage.getItem("@user_email");
     const response = await fetch(HOST + "/api/users/addmeons/list", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        email: await AsyncStorage.getItem("@user_email"),
+        email: userMail,
         deviceID: getUniqueIdSync()
       })
     });
     const json = await response.json();
     const arrAddMeOnButtons: any = [];
     console.log(json.addMeOns);
-    await setAddMeOns(await json.addMeOns);
+    await setAddMeOns(json.addMeOns);
     console.log("state: " + JSON.stringify(addMeOns));
 
-      //TODO figure out
-      Object.keys(json.addMeOns).forEach((key, index) => {
-        console.log("key: " + key);
-        arrAddMeOnButtons.push(<AddMeOnButton key={key}
-                                              title={key}
-                                              addMeOn={json.addMeOns[key]}
-                                              saveChanges={saveChanges}
-        />);
-      })
+    //TODO figure out
+    if(Object.keys(json.addMeOns).length>0)
+    Object.keys(json.addMeOns).forEach((key, index) => {
+      console.log("key: " + key);
+      arrAddMeOnButtons.push(<AddMeOnButton key={key}
+                                            title={key}
+                                            addMeOn={json.addMeOns[key]}
+                                            saveChanges={saveChanges}
+      />);
+    });
 
-      Object.keys(addMeOnsStatic).forEach((key, index) => {
-        if(json.addMeOns) if(Object.keys(json.addMeOns).includes(key)) return;
-        arrAddMeOnButtons.push(<AddMeOnButton key={key}
-                                              title={key}
-                                              addMeOn={addMeOnsStatic[key]}
-                                              saveChanges={saveChanges}
-        />);
-      });
+    Object.keys(addMeOnsStatic).forEach((key, index) => {
+      if (json.addMeOns) if (Object.keys(json.addMeOns).includes(key)) return;
+      arrAddMeOnButtons.push(<AddMeOnButton key={key}
+                                            title={key}
+                                            addMeOn={addMeOnsStatic[key]}
+                                            saveChanges={saveChanges}
+      />);
+    });
     setAddMeOnButtons(arrAddMeOnButtons);
     setLoading(false);
   };
@@ -96,8 +100,8 @@ export default function EditAccount({ navigation }: any): JSX.Element {
   return (
     <SafeAreaView>
       <ScrollView>
-        <View style={{ alignSelf: "flex-start" }}>
-          <Button title="Return to home" onPress={() => navigation.navigate("Home")} />
+        <View style={{ alignSelf: "flex-start", paddingHorizontal: 10 }}>
+          <Button title="&#8249; Return to home" onPress={() => navigation.navigate("Home")} />
         </View>
         <View style={{ margin: 10, padding: 10 }}>
           <>

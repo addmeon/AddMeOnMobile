@@ -30,8 +30,8 @@ export default function Home({ navigation }: any): JSX.Element {
         <ActivityIndicator />
         :
         <View>
-          <View style={{ alignItems: "flex-end", justifyContent: "flex-start" }}>
-            <Button title="Edit your Add Me On page" onPress={() => navigation.navigate("EditAccount")}></Button>
+          <View style={{ alignItems: "flex-end", justifyContent: "flex-start", paddingHorizontal: 10 }}>
+            <Button title="Edit your Add Me On page &#8250;" onPress={() => navigation.navigate("EditAccount")}></Button>
           </View>
           <View style={{ padding: 10, alignItems: "center" }}>
             <Text style={{fontSize: 30}}>addmeon.org/{path}</Text>
@@ -40,7 +40,7 @@ export default function Home({ navigation }: any): JSX.Element {
             alignItems: "center", justifyContent: "center"
           }}>
             <QRCode
-              value={HOST + "/" + path}
+              value={"https://addmeon.org/" + path}
               size={210}
               color={"black"}
               backgroundColor={"transparent"}
